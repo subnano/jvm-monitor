@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/subnano/jvm-monitor.svg?branch=master)](https://travis-ci.org/subnano/jvm-monitor)
+[![Build Status](https://travis-ci.com/subnano/jvm-monitor.svg?branch=master)](https://travis-ci.com/subnano/jvm-monitor)
 
 # JVM Monitor
 Monitors and records JVM garbage collection activity.
