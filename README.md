@@ -1,3 +1,10 @@
+[![Build Status](https://travis-ci.org/subnano/jvm-monitor.svg?branch=master)](https://travis-ci.org/subnano/jvm-monitor)
+
+# JVM Monitor
+Monitors and records JVM garbage collection activity.
+
+### HSPerfData Options
+
 Available options:
 
 See jstat_options for further information.
@@ -128,4 +135,4 @@ sun.gc.tlab.maxSlowAlloc = 84
 sun.gc.tlab.maxSlowWaste = 0 (Bytes)
 sun.gc.tlab.slowAlloc = 84
 sun.gc.tlab.slowWaste = 0 (Bytes)
-# jvm-monitor
+
