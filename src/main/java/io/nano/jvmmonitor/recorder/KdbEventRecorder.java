@@ -29,8 +29,6 @@ public class KdbEventRecorder implements EventRecorder, Connectable {
 
     private void recordGcEvent(GcEvent event) {
         // timestamp, host, pid, mainClass, cause, name, pauseTime
-
-                kdb.update(GCEVENT_TABLE_NAME, );
     }
 
     @Override

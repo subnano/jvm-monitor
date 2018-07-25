@@ -3,6 +3,17 @@
 # JVM Monitor
 Monitors and records JVM garbage collection activity.
 
+### TODO
+- GcEvent should include heapSize / bytesBefore / bytesAfter
+- evaluate columns used on GcEvent (name -> collector)
+- surely can use a better value for timestamp - not Date
+- benchmark record writing & kdb update
+- benchmark sync vs async updates
+- determine how to get result of async update
+- determine how to specify table schema
+- move Kx code to nano
+- move jvm-monitor to nano/tools/jvm-monitor
+
 ### HSPerfData Options
 
 Available options:

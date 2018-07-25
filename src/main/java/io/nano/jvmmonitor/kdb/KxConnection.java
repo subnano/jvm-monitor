@@ -32,6 +32,10 @@ public class KxConnection {
         }
     }
 
+    public KxTableWriterBuilder newTableWriterBuilder() {
+        return new KxTableWriterBuilder(this);
+    }
+
     public void update(String table, io.nano.jvmmonitor.kdb.c.Flip flip) {
         try {
             // send asynchronously

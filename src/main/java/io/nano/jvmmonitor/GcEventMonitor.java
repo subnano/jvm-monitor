@@ -46,7 +46,7 @@ public class GcEventMonitor {
 
         // add persistent values
         event.host(hostName);
-        event.pid(vm.getVmIdentifier().getUserInfo());
+        event.pid(Integer.parseInt(vm.getVmIdentifier().getUserInfo()));
         event.mainClass(getVmMainClass(vm));
     }
 

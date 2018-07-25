@@ -4,7 +4,7 @@ public class MutableGcEvent implements GcEvent {
 
     private long timestamp;
     private String host;
-    private String pid;
+    private int pid;
     private String mainClass;
     private String cause;
     private String name;
@@ -23,7 +23,7 @@ public class MutableGcEvent implements GcEvent {
     }
 
     @Override
-    public String pid() {
+    public int pid() {
         return pid;
     }
 
@@ -51,7 +51,7 @@ public class MutableGcEvent implements GcEvent {
         this.host = host;
     }
 
-    public void pid(String pid) {
+    public void pid(int pid) {
         this.pid = pid;
     }
 

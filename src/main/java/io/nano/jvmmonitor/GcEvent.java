@@ -6,7 +6,7 @@ public interface GcEvent extends JvmEvent {
 
     String host();
 
-    String pid();
+    int pid();
 
     String mainClass();
 

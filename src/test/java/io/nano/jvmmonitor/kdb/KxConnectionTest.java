@@ -1,37 +1,55 @@
 package io.nano.jvmmonitor.kdb;
 
+import io.nano.jvmmonitor.GcEvent;
+import io.nano.jvmmonitor.MutableGcEvent;
+import io.nano.jvmmonitor.recorder.KxTableWriter;
+import io.nano.jvmmonitor.recorder.TableDataBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Date;
 
 class KxConnectionTest {
-
-    private static final String[] COL_NAMES
-            = new String[]{"time", "sym", "pid", "gcName", "pauseTime"};
 
     @Test
     void testKxConnection() throws IOException {
         KxConnection connection = new KxConnection("localhost", 5010);
         connection.connect();
 
-        Date[] dates = new Date[1];
-        String[] syms = new String[1];
-        int[] pids = new int[1];
-        String[] gcNames = new String[1];
-        long[] pauseTimes = new long[1];
+        KxTableWriterBuilder builder = connection.newTableWriterBuilder();
+        KxTableWriter tableWriter = builder
+                .forTable("gcevents")
+                .addTimestamp("timestamp")
+                .addString("host")
+                .addString("mainClass")
+                .addInt("pid")
+                .addString("collector")
+                .addLong("pauseTime")
+                .build();
 
-        dates[0] = new Date();
-        syms[0] = "service1";
-        pids[0] = 12345;
-        gcNames[0] = "YoungGen";
-        pauseTimes[0] = 864102;
+        GcEvent event = getGcEvent();
 
-        Object[] data = new Object[]{dates, syms, pids, gcNames, pauseTimes};
-        c.Flip table = new c.Flip(new c.Dict(COL_NAMES, data));
-        connection.update("events", table);
+        TableDataBuffer buffer = tableWriter.getTableDataBuffer();
+        buffer.setTimestamp(0, event.timestamp());
+        buffer.setString(1, event.host());
+        buffer.setString(2, event.mainClass());
+        buffer.setInt(3, event.pid());
+        buffer.setString(4, event.name());
+        buffer.setLong(5, event.pauseTime());
+
+        tableWriter.invoke();
 
         connection.close();
+    }
+
+    private MutableGcEvent getGcEvent() {
+        MutableGcEvent event = new MutableGcEvent();
+        event.timestamp(System.currentTimeMillis());
+        event.host("host1");
+        event.mainClass("io.nano.FakeClass");
+        event.name("Dumb Collector");
+        event.pid(1748);
+        event.pauseTime(864112L);
+        return event;
     }
 
 
