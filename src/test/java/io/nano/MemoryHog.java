@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 public class MemoryHog {
 
     private static final int CAPACITY = 5000;
-    private static final int ALLOCATE_PERIOD = 150;
+    private static final int ALLOCATE_PERIOD = 25;
     private static final int DEALLOCATE_PERIOD = 1000 * 10;
     private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 

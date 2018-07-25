@@ -1,37 +1,19 @@
 package io.nano.jvmmonitor;
 
-public class GcEvent implements JvmEvent {
+public interface GcEvent extends JvmEvent {
 
-    private final String hostName;
-    private final String pid;
-    private final String mainVmClass;
-    private final String cause;
-    private final long pauseTimeMicros;
+    long timestamp();
 
-    public GcEvent(String hostName, String pid, String mainVmClass, String cause, long pauseTimeMicros) {
-        this.hostName = hostName;
-        this.pid = pid;
-        this.mainVmClass = mainVmClass;
-        this.cause = cause;
-        this.pauseTimeMicros = pauseTimeMicros;
-    }
+    String host();
 
-    public String getCause() {
-        return cause;
-    }
+    String pid();
 
-    public long getTime() {
-        return pauseTimeMicros;
-    }
+    String mainClass();
 
-    @Override
-    public String toString() {
-        return "GcEvent{" +
-                hostName +
-                ", " + pid +
-                ", " + mainVmClass +
-                ", " + cause +
-                ", " + pauseTimeMicros +
-                '}';
-    }
+    String cause();
+
+    String name();
+
+    long pauseTime();
+
 }

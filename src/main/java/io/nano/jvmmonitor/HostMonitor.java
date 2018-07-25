@@ -1,5 +1,7 @@
 package io.nano.jvmmonitor;
 
+import io.nano.jvmmonitor.recorder.EventRecorder;
+import io.nano.jvmmonitor.recorder.LoggingRecorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.jvmstat.monitor.HostIdentifier;
@@ -21,12 +23,13 @@ import java.util.concurrent.TimeUnit;
 public class HostMonitor {
 
     private static final Logger LOGGER = LogManager.getLogger(HostMonitor.class);
+    private static final int YOUNG_GEN = 0;
 
     private String hostName;
     private final MonitoredHost monitoredHost;
     private final MonitorSettings settings;
     private final ScheduledExecutorService executor;
-    private ConcurrentMap<Integer, YoungGenEventMonitor> monitoredVMs = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, GcEventMonitor> monitoredVMs = new ConcurrentHashMap<>();
     private EventRecorder recorder;
 
     public HostMonitor(MonitorSettings settings) {
@@ -82,12 +85,13 @@ public class HostMonitor {
             String vmIdString = "//" + vmId + "?mode=r";
             try {
                 VmIdentifier vmIdentifier = new VmIdentifier(vmIdString);
-                if (vmId == 23754)
-                    PerfDataReader.dump2(vmIdentifier);
-
+//                if (vmId == 23754)
+//                    PerfDataReader.dump2(vmIdentifier);
+//                PerfDataBuffer perfDataBuffer = new PerfDataBuffer(vmIdentifier);
+//                perfDataBuffer.findByName();
                 // autoboxing int not ideal
                 MonitoredVm vm = monitoredHost.getMonitoredVm(vmIdentifier, 0);
-                monitoredVMs.putIfAbsent(vmId, new YoungGenEventMonitor(hostName, vm, settings, recorder));
+                monitoredVMs.putIfAbsent(vmId, new GcEventMonitor(hostName, vm, settings, recorder, YOUNG_GEN));
             } catch (URISyntaxException e) {
                 LOGGER.warn("Unable to create VmIdentifier from {}", vmIdString);
             } catch (MonitorException e) {

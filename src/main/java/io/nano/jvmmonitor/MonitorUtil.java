@@ -24,7 +24,7 @@ public final class MonitorUtil {
         }
     }
 
-    static LongMonitor getLongMonitor(MonitoredVm monitoredVm, String name) {
-        return new JvmLongMonitor(getMonitor(monitoredVm, name));
+    static Monitor getIndexedMonitor(MonitoredVm vm, String format, int index) {
+        return getMonitor(vm, String.format(format, index));
     }
 }
