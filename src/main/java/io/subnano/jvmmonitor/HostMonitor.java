@@ -122,7 +122,7 @@ public class HostMonitor {
                 try {
                     monitor.invoke();
                 } catch (Exception e) {
-                    LOGGER.warn("Exception in monitor: {}", e.getMessage(), e);
+                    LOGGER.warn("Exception in monitor: {}", e.toString(), e);
                 }
             });
         }

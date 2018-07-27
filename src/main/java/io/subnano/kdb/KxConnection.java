@@ -34,6 +34,7 @@ public class KxConnection {
     }
 
     public void connect() throws IOException {
+        LOGGER.info("Connecting to {}:{}", host, port);
         // TODO add reconnection logic possibly at a higher level
         try {
             this.c = new c(host, port);

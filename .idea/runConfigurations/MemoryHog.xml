@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MemoryHog" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="io.nano.MemoryHog" />
+    <module name="jvm-monitor" />
+    <option name="VM_PARAMETERS" value="-Xms256m -Xmx256m -XX:+PrintGCDetails -XX:-PrintGCApplicationStoppedTime -XX:-PrintGCApplicationConcurrentTime -XX:+PrintGCDateStamps" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="io.nano.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

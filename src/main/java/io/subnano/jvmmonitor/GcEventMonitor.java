@@ -6,6 +6,8 @@ import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
 import sun.jvmstat.monitor.MonitoredVmUtil;
 
+import java.util.Date;
+
 /**
  * sun.gc.cause = No GC
  * sun.gc.collector.0.invocations = 0 (Events)ti
@@ -32,6 +34,9 @@ public class GcEventMonitor {
     private final Monitor pauseTimeMonitor;
     private final Monitor monitorGcName;
     private final MutableGcEvent event;
+    private final Monitor entryTimeMonitor;
+    private final long hrtFrequency;
+    private final MonitoredVm vm;
 
     private long previousPauseTime = 0;
 
@@ -44,6 +49,9 @@ public class GcEventMonitor {
         this.monitorGcCause = MonitorUtil.getMonitor(vm, GC_LAST_CAUSE);
         this.monitorGcName = MonitorUtil.getIndexedMonitor(vm, GC_NAME, generationIndex);
         this.pauseTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_TIME, generationIndex);
+        this.entryTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_ENTRY_TIME, generationIndex);
+        this.hrtFrequency = MonitorUtil.getLongValue(vm, HRT_FREQUENCY);
+        this.vm = vm;
         this.event = new MutableGcEvent();
 
         // add persistent values
@@ -55,6 +63,7 @@ public class GcEventMonitor {
     void invoke() {
         long currentPauseTime = (long) pauseTimeMonitor.getValue();
         if (currentPauseTime != previousPauseTime) {
+            event.timestamp(System.currentTimeMillis());
             event.cause((String) monitorGcCause.getValue());
             event.collector((String) monitorGcName.getValue());
             event.pauseTime(currentPauseTime - previousPauseTime);
