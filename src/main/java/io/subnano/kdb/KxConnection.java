@@ -51,11 +51,11 @@ public class KxConnection {
         try {
             // TODO send asynchronously
             Object result = c.k(command, table, flip);
-            LOGGER.debug("Successfully wrote record to kx server");
+            //LOGGER.debug("Successfully wrote record to kx server");
         } catch (IOException e) {
-            LOGGER.error("Error writing record", e);
+            LOGGER.error("Error writing record to kdb", e);
         } catch (kx.c.KException e) {
-            LOGGER.error("Error writing record", e);
+            LOGGER.error("Error writing record to kdb", e);
         }
     }
 

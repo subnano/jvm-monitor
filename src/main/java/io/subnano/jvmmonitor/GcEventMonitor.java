@@ -22,8 +22,10 @@ import sun.jvmstat.monitor.MonitoredVmUtil;
 public class GcEventMonitor {
 
     private static final String GC_LAST_CAUSE = "sun.gc.lastCause";
-    private static final String GC_NAME_YG = "sun.gc.collector.%s.name";
-    private static final String GC_TIME_YG = "sun.gc.collector.%s.time";
+    private static final String GC_NAME = "sun.gc.collector.%s.name";
+    private static final String GC_TIME = "sun.gc.collector.%s.time";
+    private static final String GC_ENTRY_TIME = "sun.gc.collector.%s.lastEntryTime";
+    private static final String HRT_FREQUENCY = "sun.os.hrt.frequency";
 
     private final Monitor monitorGcCause;
     private final EventRecorder recorder;
@@ -40,8 +42,8 @@ public class GcEventMonitor {
                           int generationIndex) {
         this.recorder = recorder;
         this.monitorGcCause = MonitorUtil.getMonitor(vm, GC_LAST_CAUSE);
-        this.monitorGcName = MonitorUtil.getIndexedMonitor(vm, GC_NAME_YG, generationIndex);
-        this.pauseTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_TIME_YG, generationIndex);
+        this.monitorGcName = MonitorUtil.getIndexedMonitor(vm, GC_NAME, generationIndex);
+        this.pauseTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_TIME, generationIndex);
         this.event = new MutableGcEvent();
 
         // add persistent values
