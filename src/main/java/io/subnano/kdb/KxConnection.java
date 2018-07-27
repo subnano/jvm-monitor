@@ -1,8 +1,17 @@
-package io.nano.jvmmonitor.kdb;
+package io.subnano.kdb;
+
+import kx.c;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.TimeZone;
 
 public class KxConnection {
+
+    private static final Logger LOGGER = LogManager.getLogger(KxConnection.class);
+
+    private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
     private final String host;
     private final int port;
@@ -24,11 +33,13 @@ public class KxConnection {
         this.userPassword = userPassword();
     }
 
-    public void connect() {
+    public void connect() throws IOException {
+        // TODO add reconnection logic possibly at a higher level
         try {
             this.c = new c(host, port);
-        } catch (Exception e) {
-            e.printStackTrace();
+            this.c.tz = UTC_TIME_ZONE;
+        } catch (kx.c.KException e) {
+            throw new IOException(e);
         }
     }
 
@@ -36,16 +47,15 @@ public class KxConnection {
         return new KxTableWriterBuilder(this);
     }
 
-    public void update(String table, io.nano.jvmmonitor.kdb.c.Flip flip) {
+    public void invoke(String table, String command, kx.c.Flip flip) {
         try {
-            // send asynchronously
-            Object result = c.k(".u.upd", table, flip);
-            System.out.println("Sent records to kdb server");
+            // TODO send asynchronously
+            Object result = c.k(command, table, flip);
+            LOGGER.debug("Successfully wrote record to kx server");
         } catch (IOException e) {
-            System.err.println("error sending feed to server.");
-        } catch (io.nano.jvmmonitor.kdb.c.KException e) {
-            System.err.println("error sending feed to server.");
-            e.printStackTrace();
+            LOGGER.error("Error writing record", e);
+        } catch (kx.c.KException e) {
+            LOGGER.error("Error writing record", e);
         }
     }
 

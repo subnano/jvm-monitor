@@ -1,7 +1,7 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
-import io.nano.jvmmonitor.recorder.EventRecorder;
-import io.nano.jvmmonitor.recorder.LoggingRecorder;
+import io.subnano.jvmmonitor.recorder.EventRecorder;
+import io.subnano.jvmmonitor.recorder.KdbEventRecorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.jvmstat.monitor.HostIdentifier;
@@ -13,6 +13,7 @@ import sun.jvmstat.monitor.event.HostEvent;
 import sun.jvmstat.monitor.event.HostListener;
 import sun.jvmstat.monitor.event.VmStatusChangeEvent;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,9 +31,10 @@ public class HostMonitor {
     private final MonitorSettings settings;
     private final ScheduledExecutorService executor;
     private ConcurrentMap<Integer, GcEventMonitor> monitoredVMs = new ConcurrentHashMap<>();
-    private EventRecorder recorder;
+    private final EventRecorder eventRecorder;
 
-    public HostMonitor(MonitorSettings settings) {
+    public HostMonitor(MonitorSettings settings, KdbEventRecorder eventRecorder) {
+        this.eventRecorder = eventRecorder;
         this.hostName = SystemUtil.getHostName();
         this.settings = settings;
         this.monitoredHost = newMonitoredHost();
@@ -44,7 +46,6 @@ public class HostMonitor {
         this.executor = Executors.newSingleThreadScheduledExecutor(
                 ThreadFactories.newThreadFactory("JvmMonitor", false)
         );
-        this.recorder = new LoggingRecorder();
     }
 
     private MonitoredHost newMonitoredHost() {
@@ -57,15 +58,17 @@ public class HostMonitor {
         }
     }
 
-    public void start() {
+    public void start() throws IOException {
         // get the set of active JVMs
         // decided against using this as it isn't ideal
         // really need to write own efficient way of monitoring list of VMs
         //Set<Integer> jvms = monitoredHost.activeVms();
+        eventRecorder.connect();
         executor.scheduleAtFixedRate(new VMCheck(), 10, 10, TimeUnit.MILLISECONDS);
     }
 
-    public void stop() {
+    public void stop() throws IOException {
+        eventRecorder.close();
         executor.shutdown();
     }
 
@@ -91,7 +94,7 @@ public class HostMonitor {
 //                perfDataBuffer.findByName();
                 // autoboxing int not ideal
                 MonitoredVm vm = monitoredHost.getMonitoredVm(vmIdentifier, 0);
-                monitoredVMs.putIfAbsent(vmId, new GcEventMonitor(hostName, vm, settings, recorder, YOUNG_GEN));
+                monitoredVMs.putIfAbsent(vmId, new GcEventMonitor(hostName, vm, settings, eventRecorder, YOUNG_GEN));
             } catch (URISyntaxException e) {
                 LOGGER.warn("Unable to create VmIdentifier from {}", vmIdString);
             } catch (MonitorException e) {

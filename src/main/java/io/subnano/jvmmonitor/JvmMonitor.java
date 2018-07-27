@@ -1,8 +1,10 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
+import io.subnano.jvmmonitor.recorder.KdbEventRecorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.concurrent.locks.LockSupport;
 
 public class JvmMonitor {
@@ -11,15 +13,20 @@ public class JvmMonitor {
     private final HostMonitor hostMonitor;
 
     public JvmMonitor(MonitorSettings monitorSettings) {
-        this.hostMonitor = new HostMonitor(monitorSettings);
+        KdbEventRecorder eventRecorder = new KdbEventRecorder("localhost", 5001);
+        this.hostMonitor = new HostMonitor(monitorSettings, eventRecorder);
     }
 
     public static void main(String[] args) {
         JvmMonitor jvmMonitor = new JvmMonitor(new MonitorSettings());
-        jvmMonitor.start();
+        try {
+            jvmMonitor.start();
+        } catch (IOException e) {
+            LOGGER.error("Error starting Kvm monitor: ", e);
+        }
     }
 
-    private void start() {
+    private void start() throws IOException {
         LOGGER.info("Starting ..");
         hostMonitor.start();
         while(Thread.currentThread().isAlive()) {
@@ -55,6 +62,10 @@ public class JvmMonitor {
 
     void stop() {
         LOGGER.info("Stopping ..");
-        hostMonitor.stop();
+        try {
+            hostMonitor.stop();
+        } catch (IOException e) {
+            LOGGER.warn("Error caught stopping Jvm monitor.", e);
+        }
     }
 }

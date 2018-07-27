@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
 import java.io.Closeable;
 import java.io.IOException;

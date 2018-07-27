@@ -1,9 +1,7 @@
-package io.nano.jvmmonitor.kdb;
+package io.subnano.kdb;
 
-import io.nano.jvmmonitor.GcEvent;
-import io.nano.jvmmonitor.MutableGcEvent;
-import io.nano.jvmmonitor.recorder.KxTableWriter;
-import io.nano.jvmmonitor.recorder.TableDataBuffer;
+import io.subnano.jvmmonitor.GcEvent;
+import io.subnano.jvmmonitor.MutableGcEvent;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -18,12 +16,12 @@ class KxConnectionTest {
         KxTableWriterBuilder builder = connection.newTableWriterBuilder();
         KxTableWriter tableWriter = builder
                 .forTable("gcevents")
-                .addTimestamp("timestamp")
-                .addString("host")
-                .addString("mainClass")
-                .addInt("pid")
-                .addString("collector")
-                .addLong("pauseTime")
+                .addColumn("timestamp", ColumnType.Timestamp)
+                .addColumn("host", ColumnType.String)
+                .addColumn("mainClass", ColumnType.String)
+                .addColumn("pid", ColumnType.Int)
+                .addColumn("collector", ColumnType.String)
+                .addColumn("pauseTime", ColumnType.Long)
                 .build();
 
         GcEvent event = getGcEvent();
@@ -33,7 +31,7 @@ class KxConnectionTest {
         buffer.setString(1, event.host());
         buffer.setString(2, event.mainClass());
         buffer.setInt(3, event.pid());
-        buffer.setString(4, event.name());
+        buffer.setString(4, event.collector());
         buffer.setLong(5, event.pauseTime());
 
         tableWriter.invoke();
@@ -46,7 +44,7 @@ class KxConnectionTest {
         event.timestamp(System.currentTimeMillis());
         event.host("host1");
         event.mainClass("io.nano.FakeClass");
-        event.name("Dumb Collector");
+        event.collector("Dumb Collector");
         event.pid(1748);
         event.pauseTime(864112L);
         return event;

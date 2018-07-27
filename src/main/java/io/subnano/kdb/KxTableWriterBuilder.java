@@ -1,12 +1,13 @@
-package io.nano.jvmmonitor.kdb;
-
-import io.nano.jvmmonitor.recorder.KxTableWriter;
+package io.subnano.kdb;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class KxTableWriterBuilder {
+/**
+ * Control sync/async flag here
+ */
+public class KxTableWriterBuilder {
 
     // Only supports single row for now
     private final int rowCount = 1;
@@ -26,27 +27,9 @@ class KxTableWriterBuilder {
         return this;
     }
 
-    public KxTableWriterBuilder addTimestamp(String name) {
+    public KxTableWriterBuilder addColumn(String name, ColumnType columnType) {
         columnNames.add(name);
-        columnTypes.add(ColumnType.Timestamp);
-        return this;
-    }
-
-    public KxTableWriterBuilder addString(String name) {
-        columnNames.add(name);
-        columnTypes.add(ColumnType.String);
-        return this;
-    }
-
-    public KxTableWriterBuilder addInt(String name) {
-        columnNames.add(name);
-        columnTypes.add(ColumnType.Int);
-        return this;
-    }
-
-    public KxTableWriterBuilder addLong(String name) {
-        columnNames.add(name);
-        columnTypes.add(ColumnType.Long);
+        columnTypes.add(columnType);
         return this;
     }
 
@@ -54,6 +37,7 @@ class KxTableWriterBuilder {
         return new KxTableWriter(
                 kxConnection,
                 tableName,
+                "insert",
                 columnNames.toArray(new String[0]),
                 newTableData()
         );

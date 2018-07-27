@@ -1,8 +1,10 @@
-package io.nano.jvmmonitor.recorder;
+package io.subnano.jvmmonitor.recorder;
 
-import io.nano.jvmmonitor.JvmEvent;
+import io.subnano.jvmmonitor.JvmEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 
 public class LoggingRecorder implements EventRecorder {
 
@@ -17,5 +19,15 @@ public class LoggingRecorder implements EventRecorder {
     @Override
     public void record(JvmEvent event) {
         LOGGER.info(event);
+    }
+
+    @Override
+    public void connect() throws IOException {
+        // NO-OP
+    }
+
+    @Override
+    public void close() throws IOException {
+        // NO-OP
     }
 }

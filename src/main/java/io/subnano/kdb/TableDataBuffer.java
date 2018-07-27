@@ -1,7 +1,10 @@
-package io.nano.jvmmonitor.recorder;
+package io.subnano.kdb;
 
 import java.util.Date;
 
+/**
+ * Not so much a buffer as a utility method to access the Object[][]
+ */
 public class TableDataBuffer {
 
     // We may want to support writing multiple rows

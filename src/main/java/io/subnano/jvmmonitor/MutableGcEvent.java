@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
 public class MutableGcEvent implements GcEvent {
 
@@ -7,7 +7,7 @@ public class MutableGcEvent implements GcEvent {
     private int pid;
     private String mainClass;
     private String cause;
-    private String name;
+    private String collector;
     private long pauseTime;
 
     public long timestamp() {
@@ -38,8 +38,8 @@ public class MutableGcEvent implements GcEvent {
     }
 
     @Override
-    public String name() {
-        return name;
+    public String collector() {
+        return collector;
     }
 
     @Override
@@ -63,8 +63,8 @@ public class MutableGcEvent implements GcEvent {
         this.cause = cause;
     }
 
-    public void name(String name) {
-        this.name = name;
+    public void collector(String collector) {
+        this.collector = collector;
     }
 
     public void pauseTime(long pauseTime) {
@@ -78,7 +78,7 @@ public class MutableGcEvent implements GcEvent {
                 ", " + pid +
                 ", " + mainClass +
                 ", " + cause +
-                ", " + name +
+                ", " + collector +
                 ", " + pauseTime +
                 '}';
     }

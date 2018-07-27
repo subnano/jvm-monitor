@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
 import sun.jvmstat.monitor.Monitor;
 import sun.jvmstat.monitor.MonitorException;

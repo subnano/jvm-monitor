@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
 public interface GcEvent extends JvmEvent {
 
@@ -12,7 +12,7 @@ public interface GcEvent extends JvmEvent {
 
     String cause();
 
-    String name();
+    String collector();
 
     long pauseTime();
 

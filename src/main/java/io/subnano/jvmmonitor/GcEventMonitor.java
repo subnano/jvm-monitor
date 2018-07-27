@@ -1,6 +1,6 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
-import io.nano.jvmmonitor.recorder.EventRecorder;
+import io.subnano.jvmmonitor.recorder.EventRecorder;
 import sun.jvmstat.monitor.Monitor;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
@@ -54,7 +54,7 @@ public class GcEventMonitor {
         long currentPauseTime = (long) pauseTimeMonitor.getValue();
         if (currentPauseTime != previousPauseTime) {
             event.cause((String) monitorGcCause.getValue());
-            event.name((String) monitorGcName.getValue());
+            event.collector((String) monitorGcName.getValue());
             event.pauseTime(currentPauseTime - previousPauseTime);
             previousPauseTime = currentPauseTime;
             recorder.record(event);

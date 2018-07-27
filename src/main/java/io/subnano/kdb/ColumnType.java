@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor.kdb;
+package io.subnano.kdb;
 
 public enum ColumnType {
     Timestamp,

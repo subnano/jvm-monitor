@@ -1,4 +1,4 @@
-package io.nano.jvmmonitor;
+package io.subnano.jvmmonitor;
 
 public interface JvmEvent {
 }
