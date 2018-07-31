@@ -1,5 +1,8 @@
 package io.subnano.kdb;
 
+import kx.c;
+import kx.c.Flip;
+
 import java.util.Date;
 
 /**
@@ -9,41 +12,57 @@ public class TableDataBuffer {
 
     // We may want to support writing multiple rows
     private final int rowIndex = 0;
+    // pointer to column to be updated
+    private int colIndex = 0;
     private final Object[] tableData;
+    private final Flip flip;
 
-    TableDataBuffer(Object[] tableData) {
-        this.tableData = tableData;
+    TableDataBuffer(String[] columnNames, Object[] tableSchema) {
+        this.tableData = tableSchema;
+        this.flip = new Flip(new c.Dict(columnNames, tableSchema));
     }
 
-    public void setTimestamp(int index, long timestamp) {
-        Object colData = tableData[index];
+    /**
+     * Rests column index (rename?)
+     */
+    public void reset() {
+        colIndex = 0;
+    }
+
+    public void addTimestamp(long timestamp) {
+        Object colData = tableData[colIndex];
         if (!(colData instanceof Date[]))
-            throw new ClassCastException(colData.getClass() + " cannot be cast to Date[] when updating column " + index);
+            throw new ClassCastException(colData.getClass() + " cannot be cast to Date[] when updating column " + colIndex);
         Date date = ((Date[]) colData)[rowIndex];
         if (date == null) {
             date = new Date();
             ((Date[]) colData)[rowIndex] = date;
         }
         date.setTime(timestamp);
+        colIndex++;
     }
 
-    public void setString(int index, String value) {
-        Object colData = tableData[index];
+    public void addString(String value) {
+        Object colData = tableData[colIndex];
         if (!(colData instanceof String[]))
-            throw new ClassCastException(colData.getClass() + " cannot be cast to String[] when updating column " + index);
+            throw new ClassCastException(colData.getClass() + " cannot be cast to String[] when updating column " + colIndex);
         ((String[]) colData)[rowIndex] = value;
+        colIndex++;
     }
 
-    public void setInt(int index, int value) {
-        Object colData = tableData[index];
+    public void addInt(int value) {
+        Object colData = tableData[colIndex++];
         ((int[]) colData)[rowIndex] = value;
     }
 
-    public void setLong(int index, long value) {
-        Object colData = tableData[index];
+    public void addLong(long value) {
+        Object colData = tableData[colIndex++];
         ((long[]) colData)[rowIndex] = value;
     }
 
+    Flip flip() {
+        return flip;
+    }
 }
 
 

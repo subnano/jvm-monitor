@@ -2,41 +2,44 @@ package io.subnano.kdb;
 
 import io.subnano.jvmmonitor.GcEvent;
 import io.subnano.jvmmonitor.MutableGcEvent;
+import io.subnano.jvmmonitor.recorder.GcEventWriter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 class KxConnectionTest {
 
-    @Test
-    void testKxConnection() throws IOException {
-        KxConnection connection = new KxConnection("localhost", 5010);
+    private KxConnection connection;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        connection = new KxConnection("localhost", 5010);
         connection.connect();
+    }
 
-        KxTableWriterBuilder builder = connection.newTableWriterBuilder();
-        KxTableWriter tableWriter = builder
-                .forTable("gcevents")
-                .addColumn("timestamp", ColumnType.Timestamp)
-                .addColumn("host", ColumnType.String)
-                .addColumn("mainClass", ColumnType.String)
-                .addColumn("pid", ColumnType.Int)
-                .addColumn("collector", ColumnType.String)
-                .addColumn("pauseTime", ColumnType.Long)
-                .build();
-
-        GcEvent event = getGcEvent();
-
-        TableDataBuffer buffer = tableWriter.getTableDataBuffer();
-        buffer.setTimestamp(0, event.timestamp());
-        buffer.setString(1, event.host());
-        buffer.setString(2, event.mainClass());
-        buffer.setInt(3, event.pid());
-        buffer.setString(4, event.collector());
-        buffer.setLong(5, event.pauseTime());
-
-        tableWriter.invoke();
-
+    @AfterEach
+    void tearDown() throws IOException {
         connection.close();
+    }
+
+    @Test
+    void writeSingleRow() {
+        KxTableWriter<GcEvent> tableWriter = new GcEventWriter(connection);
+        GcEvent event = getGcEvent();
+        tableWriter.write(event);
+    }
+
+    @Test
+    void writeMultipleRows() throws InterruptedException {
+        KxTableWriter<GcEvent> tableWriter = new GcEventWriter(connection);
+        MutableGcEvent event = getGcEvent();
+        for (int i=0; i<10; i++) {
+            event.timestamp(System.currentTimeMillis());
+            tableWriter.write(event);
+            Thread.sleep(5_000);
+        }
     }
 
     private MutableGcEvent getGcEvent() {

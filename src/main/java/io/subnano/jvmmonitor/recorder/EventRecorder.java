@@ -1,9 +1,9 @@
 package io.subnano.jvmmonitor.recorder;
 
 import io.subnano.jvmmonitor.Connectable;
-import io.subnano.jvmmonitor.JvmEvent;
 
-public interface EventRecorder extends Connectable {
+public interface EventRecorder<T> extends Connectable {
 
-    void record(JvmEvent event);
+    void record(T event);
+
 }

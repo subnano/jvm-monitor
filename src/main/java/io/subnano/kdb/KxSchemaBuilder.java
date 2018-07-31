@@ -5,39 +5,36 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Control sync/async flag here
+ * A builder to create a KxSchema
  */
-public class KxTableWriterBuilder {
+public class KxSchemaBuilder {
 
     // Only supports single row for now
     private final int rowCount = 1;
-    private final KxConnection kxConnection;
 
     private String tableName;
+
     private final List<String> columnNames = new ArrayList<>();
     private final List<ColumnType> columnTypes = new ArrayList<>();
-    private final List<Object[]> columnData = new ArrayList<>();
 
-    KxTableWriterBuilder(KxConnection kxConnection) {
-        this.kxConnection = kxConnection;
+    public KxSchemaBuilder() {
+        // nothing else to do
     }
 
-    public KxTableWriterBuilder forTable(String tableName) {
+    public KxSchemaBuilder forTable(String tableName) {
         this.tableName = tableName;
         return this;
     }
 
-    public KxTableWriterBuilder addColumn(String name, ColumnType columnType) {
+    public KxSchemaBuilder addColumn(String name, ColumnType columnType) {
         columnNames.add(name);
         columnTypes.add(columnType);
         return this;
     }
 
-    public KxTableWriter build() {
-        return new KxTableWriter(
-                kxConnection,
+    public KxSchema build() {
+        return new DefaultKxSchema(
                 tableName,
-                "insert",
                 columnNames.toArray(new String[0]),
                 newTableData()
         );
@@ -45,7 +42,7 @@ public class KxTableWriterBuilder {
 
     private Object[] newTableData() {
         Object[] data = new Object[columnTypes.size()];
-        for (int i=0; i<columnTypes.size(); i++) {
+        for (int i = 0; i < columnTypes.size(); i++) {
             ColumnType type = columnTypes.get(i);
             if (type == ColumnType.Short)
                 data[i] = new short[rowCount];

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class LoggingRecorder implements EventRecorder {
+public class LoggingRecorder<T extends JvmEvent> implements EventRecorder<T> {
 
     private static final Logger LOGGER = LogManager.getLogger(LoggingRecorder.class);
 

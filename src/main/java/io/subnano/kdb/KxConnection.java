@@ -44,8 +44,14 @@ public class KxConnection {
         }
     }
 
-    public KxTableWriterBuilder newTableWriterBuilder() {
-        return new KxTableWriterBuilder(this);
+    public <T> SyncKxTableWriter<T> newTableWriter(KxSchema kxSchema, KxEncoder<T> encoder) {
+        return new SyncKxTableWriter<>(
+                this,
+                kxSchema.tableName(),
+                kxSchema.columnNames(),
+                kxSchema.data(),
+                encoder
+        );
     }
 
     public void invoke(String table, String command, kx.c.Flip flip) {
@@ -61,7 +67,8 @@ public class KxConnection {
     }
 
     public void close() throws IOException {
-        c.close();
+        if (c != null)
+            c.close();
     }
 
     private String userPassword() {
