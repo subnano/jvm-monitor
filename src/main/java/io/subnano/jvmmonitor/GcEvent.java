@@ -14,6 +14,6 @@ public interface GcEvent extends JvmEvent {
 
     String collector();
 
-    long pauseTime();
+    float pauseTime();
 
 }

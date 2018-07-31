@@ -4,9 +4,9 @@
 Monitors and records JVM garbage collection activity.
 
 ### TODO
-- GcEvent should include heapSize / bytesBefore / bytesAfter
-- evaluate columns used on GcEvent (name -> collector)
-- move jvm-monitor to nano/tools/jvm-monitor
+- log recording intervals / settings
+- add a heap monitor
+- periodically out put some stats
 
 ### KDB Features TODO
 - reconnection logic

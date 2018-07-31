@@ -2,8 +2,9 @@ package io.subnano.jvmmonitor.recorder;
 
 import io.subnano.jvmmonitor.GcEvent;
 import io.subnano.jvmmonitor.JvmEvent;
-import io.subnano.kdb.KxConnection;
-import io.subnano.kdb.KxTableWriter;
+import io.subnano.kx.KxConnection;
+import io.subnano.kx.KxConnectionManager;
+import io.subnano.kx.KxTableWriter;
 
 import java.io.IOException;
 
@@ -13,12 +14,12 @@ public class KdbEventRecorder implements EventRecorder<JvmEvent> {
     private final KxTableWriter<GcEvent> gcEventWriter;
 
     public KdbEventRecorder(String host, int port) {
-        this.connection = new KxConnection(host, port);
+        this.connection = new KxConnectionManager(host, port);
         this.gcEventWriter = new GcEventWriter(connection);
     }
 
     @Override
-    public void record(JvmEvent event) {
+    public void record(JvmEvent event) throws IOException {
         if (event instanceof GcEvent) {
             gcEventWriter.write((GcEvent) event);
         } else {

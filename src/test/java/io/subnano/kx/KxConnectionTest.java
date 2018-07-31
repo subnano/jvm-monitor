@@ -1,4 +1,4 @@
-package io.subnano.kdb;
+package io.subnano.kx;
 
 import io.subnano.jvmmonitor.GcEvent;
 import io.subnano.jvmmonitor.MutableGcEvent;
@@ -11,11 +11,11 @@ import java.io.IOException;
 
 class KxConnectionTest {
 
-    private KxConnection connection;
+    private DefaultKxConnection connection;
 
     @BeforeEach
     void setUp() throws IOException {
-        connection = new KxConnection("localhost", 5010);
+        connection = new DefaultKxConnection("localhost", 5001);
         connection.connect();
     }
 
@@ -25,14 +25,15 @@ class KxConnectionTest {
     }
 
     @Test
-    void writeSingleRow() {
+    void writeSingleRow() throws Exception {
         KxTableWriter<GcEvent> tableWriter = new GcEventWriter(connection);
         GcEvent event = getGcEvent();
         tableWriter.write(event);
+        Thread.sleep(1000000);
     }
 
     @Test
-    void writeMultipleRows() throws InterruptedException {
+    void writeMultipleRows() throws Exception {
         KxTableWriter<GcEvent> tableWriter = new GcEventWriter(connection);
         MutableGcEvent event = getGcEvent();
         for (int i=0; i<10; i++) {
@@ -45,7 +46,7 @@ class KxConnectionTest {
     private MutableGcEvent getGcEvent() {
         MutableGcEvent event = new MutableGcEvent();
         event.timestamp(System.currentTimeMillis());
-        event.host("host1");
+        event.host("localhost");
         event.mainClass("io.nano.FakeClass");
         event.collector("Dumb Collector");
         event.pid(1748);

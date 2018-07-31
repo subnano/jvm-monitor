@@ -34,10 +34,10 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * Connector class for interfacing with a kdb+ process. This class is essentially a serializer/deserializer of java types
- * to/from the kdb+ ipc wire format, enabling remote method invocation in kdb+ via tcp/ip.
+ * Connector class for interfacing with a kx+ process. This class is essentially a serializer/deserializer of java types
+ * to/from the kx+ ipc wire format, enabling remote method invocation in kx+ via tcp/ip.
  * <p>
- * To begin with, a connection may be established to a listening kdb+ process via the constructor
+ * To begin with, a connection may be established to a listening kx+ process via the constructor
  *
  * <code>c connection=new c("localhost",5000);</code>
  * </p>
@@ -61,7 +61,7 @@ public class c {
      */
     private static String encoding="ISO-8859-1";
 
-    /** Stream for printing kdb+ objects. Defaults to System.out */
+    /** Stream for printing kx+ objects. Defaults to System.out */
     private static PrintStream out=System.out;
     /**
      *  {@code sync}  tracks how many response messages the remote is expecting
@@ -82,15 +82,15 @@ public class c {
         out=new PrintStream(System.out,true,encoding);
     }
     /**
-     * {@code s} is the socket used to communicate with the remote kdb+ process.
+     * {@code s} is the socket used to communicate with the remote kx+ process.
      */
     public Socket s;
     /**
-     * {@code i} is the {@code DataInputStream} of the socket used to read data from the remote kdb+ process.
+     * {@code i} is the {@code DataInputStream} of the socket used to read data from the remote kx+ process.
      */
     DataInputStream i;
     /**
-     * {@code o} is the outputStream of the socket used to write data to the remote kdb+ process.
+     * {@code o} is the outputStream of the socket used to write data to the remote kx+ process.
      */
     OutputStream o;
     /**
@@ -136,7 +136,7 @@ public class c {
         zip=b;
     }
     /**
-     * Prepare socket for kdb+ ipc comms
+     * Prepare socket for kx+ ipc comms
      * @param x socket to setup
      * @throws IOException an I/O error occurs.
      */
@@ -184,9 +184,9 @@ public class c {
     }
 
     /**
-     * Accepts and authenticates incoming connections using kdb+ protocol.
+     * Accepts and authenticates incoming connections using kx+ protocol.
      *
-     * @param s {@link ServerSocket} to accept connections on using kdb+ IPC protocol.
+     * @param s {@link ServerSocket} to accept connections on using kx+ IPC protocol.
      * @param a {@link IAuthenticate} instance to authenticate incoming connections.
      *          Accepts all incoming connections if {@code null}.
      *
@@ -208,7 +208,7 @@ public class c {
     /**
      * c#c(ServerSocket, IAuthenticate) without authentication.
      *
-     * @param s {@link ServerSocket} to accept connections on using kdb+ IPC protocol.
+     * @param s {@link ServerSocket} to accept connections on using kx+ IPC protocol.
      *
      * @throws IOException an I/O error occurs.
      */
@@ -296,7 +296,7 @@ public class c {
             }};
     }
 
-    /** {@code Month} represents kdb+ month type. */
+    /** {@code Month} represents kx+ month type. */
     public static class Month implements Comparable<Month>{
         /** Number of months since Jan 2000 */
         public int i;
@@ -322,7 +322,7 @@ public class c {
         }
     }
 
-    /** {@code Minute} represents kdb+ minute type. */
+    /** {@code Minute} represents kx+ minute type. */
     public static class Minute implements Comparable<Minute>{
         /** Number of minutes passed. */
         public int i;
@@ -347,7 +347,7 @@ public class c {
         }
     }
 
-    /** {@code Second} represents kdb+ second type. */
+    /** {@code Second} represents kx+ second type. */
     public static class Second implements Comparable<Second>{
         /** Number of seconds passed. */
         public int i;
@@ -372,7 +372,7 @@ public class c {
         }
     }
 
-    /** {@code Timespan} represents kdb+ timestamp type. */
+    /** {@code Timespan} represents kx+ timestamp type. */
     public static class Timespan implements Comparable<Timespan>{
         /** Number of nanoseconds passed. */
         public long j;
@@ -422,7 +422,7 @@ public class c {
         }
     }
     /**
-     * {@code Dict} represents the kdb+ dictionary type.
+     * {@code Dict} represents the kx+ dictionary type.
      */
     public static class Dict{
         /** Dict keys */
@@ -435,7 +435,7 @@ public class c {
         }
     }
     /**
-     * {@code Flip} represents a kdb+ table.
+     * {@code Flip} represents a kx+ table.
      */
     public static class Flip{
         /** Array of column names. */
@@ -587,7 +587,7 @@ public class c {
     }
     void w(UUID uuid){
         if(vt<3)
-            throw new RuntimeException("Guid not valid pre kdb+3.0");
+            throw new RuntimeException("Guid not valid pre kx+3.0");
         w(uuid.getMostSignificantBits());
         w(uuid.getLeastSignificantBits());
     }
@@ -634,7 +634,7 @@ public class c {
     }
     void w(Timespan n){
         if(vt<1)
-            throw new RuntimeException("Timespan not valid pre kdb+2.6");
+            throw new RuntimeException("Timespan not valid pre kx+2.6");
         w(n.j);
     }
 
@@ -684,7 +684,7 @@ public class c {
     void w(Timestamp p){
         long j=p.getTime();
         if(vt<1)
-            throw new RuntimeException("Timestamp not valid pre kdb+2.6");
+            throw new RuntimeException("Timestamp not valid pre kx+2.6");
         w(j==nj?j:1000000*(lg(j)-k)+p.getNanos()%1000000);
     }
     String rs() throws UnsupportedEncodingException{
@@ -871,10 +871,10 @@ public class c {
 
 //object.getClass().isArray()   t(int[]) is .5 isarray is .1 lookup .05
     /**
-     *  Gets the numeric type of the supplied object used in kdb+.
+     *  Gets the numeric type of the supplied object used in kx+.
      *
      * @param x Object to get the numeric type of
-     * @return kdb+ type number for an object
+     * @return kx+ type number for an object
      */
     public static int t(Object x){
         return x instanceof Boolean?-1:x instanceof UUID?-2:x instanceof Byte?-4:x instanceof Short?-5:x instanceof Integer?-6:x instanceof Long?-7:x instanceof Float?-8:x instanceof Double?-9:x instanceof Character?-10:x instanceof String?-11
@@ -1095,7 +1095,7 @@ public class c {
      * @param buffer byte[] to deserialise object from
      * @return deserialised object
      *
-     * @throws KException if buffer contains kdb+ error object.
+     * @throws KException if buffer contains kx+ error object.
      * @throws UnsupportedEncodingException  If the named charset is not supported
      */
     public Object deserialize(byte[]buffer)throws KException, UnsupportedEncodingException{
@@ -1120,7 +1120,7 @@ public class c {
         }
     }
     /**
-     * Sends a response message to the remote kdb+ process. This should be called only during processing of an incoming sync message.
+     * Sends a response message to the remote kx+ process. This should be called only during processing of an incoming sync message.
      *
      * @param obj Object to send to the remote
      *
@@ -1133,7 +1133,7 @@ public class c {
         w(2,obj);
     }
     /**
-     * Sends an error as a response message to the remote kdb+ process. This should be called only during processing of an incoming sync message.
+     * Sends an error as a response message to the remote kx+ process. This should be called only during processing of an incoming sync message.
      *
      * @param text The error message text
      *
@@ -1156,7 +1156,7 @@ public class c {
         }
     }
     /**
-     * Sends an async message to the remote kdb+ process. This blocks until the serialized data has been written to the
+     * Sends an async message to the remote kx+ process. This blocks until the serialized data has been written to the
      * socket. On return, there is no guarantee that this msg has already been processed by the remote process.
      *
      * @param expr The expression to send
@@ -1167,7 +1167,7 @@ public class c {
         w(0,cs(expr));
     }
     /**
-     * Sends an async message to the remote kdb+ process. This blocks until the serialized data has been written to the
+     * Sends an async message to the remote kx+ process. This blocks until the serialized data has been written to the
      * socket. On return, there is no guarantee that this msg has already been processed by the remote process.
      *
      * @param obj The object to send
@@ -1181,9 +1181,9 @@ public class c {
         return s.toCharArray();
     }
     /**
-     * Sends an async message to the remote kdb+ process. This blocks until the serialized data has been written to the
+     * Sends an async message to the remote kx+ process. This blocks until the serialized data has been written to the
      * socket. On return, there is no guarantee that this msg has already been processed by the remote process. Use this to
-     * invoke a function in kdb+ which takes a single argument and does not return a value. e.g. to invoke f[x] use
+     * invoke a function in kx+ which takes a single argument and does not return a value. e.g. to invoke f[x] use
      * ks("f",x); to invoke a lambda, use ks("{x}",x);
      *
      * @param s The name of the function, or a lambda itself
@@ -1196,9 +1196,9 @@ public class c {
         w(0,a);
     }
     /**
-     * Sends an async message to the remote kdb+ process. This blocks until the serialized data has been written to the
+     * Sends an async message to the remote kx+ process. This blocks until the serialized data has been written to the
      * socket. On return, there is no guarantee that this msg has already been processed by the remote process. Use this to
-     * invoke a function in kdb+ which takes 2 arguments and does not return a value. e.g. to invoke f[x;y] use ks("f",x,y);
+     * invoke a function in kx+ which takes 2 arguments and does not return a value. e.g. to invoke f[x;y] use ks("f",x,y);
      * to invoke a lambda, use ks("{x+y}",x,y);
      *
      * @param s The name of the function, or a lambda itself
@@ -1212,9 +1212,9 @@ public class c {
         w(0,a);
     }
     /**
-     * Sends an async message to the remote kdb+ process. This blocks until the serialized data has been written to the
+     * Sends an async message to the remote kx+ process. This blocks until the serialized data has been written to the
      * socket. On return, there is no guarantee that this msg has already been processed by the remote process. Use this to
-     * invoke a function in kdb+ which takes 3 arguments and does not return a value. e.g. to invoke f[x;y;z] use
+     * invoke a function in kx+ which takes 3 arguments and does not return a value. e.g. to invoke f[x;y;z] use
      * ks("f",x,y,z); to invoke a lambda, use ks("{x+y+z}",x,y,z);
      *
      * @param s The name of the function, or a lambda itself
@@ -1229,7 +1229,7 @@ public class c {
         w(0,a);
     }
     /**
-     * Reads an incoming message from the remote kdb+ process. This blocks until a single message has been received and
+     * Reads an incoming message from the remote kx+ process. This blocks until a single message has been received and
      * deserialized. This is called automatically during a sync request via k(String s,..). It can be called explicitly when
      * subscribing to a publisher.
      *
@@ -1252,7 +1252,7 @@ public class c {
         }
     }
     /**
-     * Sends a sync message to the remote kdb+ process. This blocks until the message has been sent in full, and a message
+     * Sends a sync message to the remote kx+ process. This blocks until the message has been sent in full, and a message
      * is received from the remote; typically the received message would be the corresponding response message.
      *
      * @param x The object to send
@@ -1266,7 +1266,7 @@ public class c {
         return k();
     }
     /**
-     * Sends a sync message to the remote kdb+ process. This blocks until the message has been sent in full, and a message
+     * Sends a sync message to the remote kx+ process. This blocks until the message has been sent in full, and a message
      * is received from the remote; typically the received message would be the corresponding response message.
      *
      * @param expr The expression to send
@@ -1279,9 +1279,9 @@ public class c {
         return k(cs(expr));
     }
     /**
-     * Sends a sync message to the remote kdb+ process. This blocks until the message has been sent in full, and a message
+     * Sends a sync message to the remote kx+ process. This blocks until the message has been sent in full, and a message
      * is received from the remote; typically the received message would be the corresponding response message. Use this to
-     * invoke a function in kdb+ which takes a single argument and returns a value. e.g. to invoke f[x] use k("f",x); to
+     * invoke a function in kx+ which takes a single argument and returns a value. e.g. to invoke f[x] use k("f",x); to
      * invoke a lambda, use k("{x}",x);
      *
      * @param s The name of the function, or a lambda itself
@@ -1296,9 +1296,9 @@ public class c {
         return k(a);
     }
     /**
-     * Sends a sync message to the remote kdb+ process. This blocks until the message has been sent in full, and a message
+     * Sends a sync message to the remote kx+ process. This blocks until the message has been sent in full, and a message
      * is received from the remote; typically the received message would be the corresponding response message. Use this to
-     * invoke a function in kdb+ which takes arguments and returns a value. e.g. to invoke f[x;y] use k("f",x,y); to invoke
+     * invoke a function in kx+ which takes arguments and returns a value. e.g. to invoke f[x;y] use k("f",x,y); to invoke
      * a lambda, use k("{x+y}",x,y);
      *
      * @param s The name of the function, or a lambda itself
@@ -1314,9 +1314,9 @@ public class c {
         return k(a);
     }
     /**
-     * Sends a sync message to the remote kdb+ process. This blocks until the message has been sent in full, and a message
+     * Sends a sync message to the remote kx+ process. This blocks until the message has been sent in full, and a message
      * is received from the remote; typically the received message would be the corresponding response message. Use this to
-     * invoke a function in kdb+ which takes 3 arguments and returns a value. e.g. to invoke f[x;y;z] use k("f",x,y,z); to
+     * invoke a function in kx+ which takes 3 arguments and returns a value. e.g. to invoke f[x;y;z] use k("f",x,y,z); to
      * invoke a lambda, use k("{x+y+z}",x,y,z);
      *
      * @param s The name of the function, or a lambda itself
@@ -1332,7 +1332,7 @@ public class c {
         Object[] a={cs(s),x,y,z};
         return k(a);
     }
-    /** Array containing null object for corresponing kdb+ type number(0-19). For example {@code "".equals(NULL[11])} */
+    /** Array containing null object for corresponing kx+ type number(0-19). For example {@code "".equals(NULL[11])} */
     public static Object[] NULL={null,new Boolean(false),new UUID(0,0),null,new Byte((byte)0),new Short(Short.MIN_VALUE),new Integer(ni),new Long(nj),new Float(nf),new Double(nf),new Character(' '),"",
             new Timestamp(nj),new Month(ni),new Date(nj),new java.util.Date(nj),new Timespan(nj),new Minute(ni),new Second(ni),new Time(nj)
     };
@@ -1341,7 +1341,7 @@ public class c {
      *
      * @param c The shorthand character for the type
      *
-     * @return instance of null object of specified kdb+ type.
+     * @return instance of null object of specified kx+ type.
      */
     public static Object NULL(char c){
         return NULL[" bg xhijefcspmdznuvt".indexOf(c)];
@@ -1352,7 +1352,7 @@ public class c {
      *
      * @param x The object to be tested for null
      *
-     * @return true if {@code x} is kdb+ null, false otherwise
+     * @return true if {@code x} is kx+ null, false otherwise
      */
     public static boolean qn(Object x){
         int t=-t(x);

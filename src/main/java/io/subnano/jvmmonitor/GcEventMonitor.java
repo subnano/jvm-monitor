@@ -6,6 +6,7 @@ import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
 import sun.jvmstat.monitor.MonitoredVmUtil;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -31,7 +32,7 @@ public class GcEventMonitor {
 
     private final Monitor monitorGcCause;
     private final EventRecorder recorder;
-    private final Monitor pauseTimeMonitor;
+    private final Monitor timeMonitor;
     private final Monitor monitorGcName;
     private final MutableGcEvent event;
     private final Monitor entryTimeMonitor;
@@ -48,7 +49,7 @@ public class GcEventMonitor {
         this.recorder = recorder;
         this.monitorGcCause = MonitorUtil.getMonitor(vm, GC_LAST_CAUSE);
         this.monitorGcName = MonitorUtil.getIndexedMonitor(vm, GC_NAME, generationIndex);
-        this.pauseTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_TIME, generationIndex);
+        this.timeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_TIME, generationIndex);
         this.entryTimeMonitor = MonitorUtil.getIndexedMonitor(vm, GC_ENTRY_TIME, generationIndex);
         this.hrtFrequency = MonitorUtil.getLongValue(vm, HRT_FREQUENCY);
         this.vm = vm;
@@ -61,14 +62,19 @@ public class GcEventMonitor {
     }
 
     void invoke() {
-        long currentPauseTime = (long) pauseTimeMonitor.getValue();
+        long currentPauseTime = (long) timeMonitor.getValue();
         if (currentPauseTime != previousPauseTime) {
+            //System.out.printf("currentPauseTime=%f time=%s\n", new Date(currentPauseTime));
             event.timestamp(System.currentTimeMillis());
             event.cause((String) monitorGcCause.getValue());
             event.collector((String) monitorGcName.getValue());
-            event.pauseTime(currentPauseTime - previousPauseTime);
+            event.pauseTime(((float)currentPauseTime - (float)previousPauseTime) / 1_000_000_000.0f);
             previousPauseTime = currentPauseTime;
-            recorder.record(event);
+            try {
+                recorder.record(event);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 

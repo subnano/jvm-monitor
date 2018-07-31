@@ -8,7 +8,7 @@ public class MutableGcEvent implements GcEvent {
     private String mainClass;
     private String cause;
     private String collector;
-    private long pauseTime;
+    private float pauseTime;
 
     public long timestamp() {
         return timestamp;
@@ -43,7 +43,7 @@ public class MutableGcEvent implements GcEvent {
     }
 
     @Override
-    public long pauseTime() {
+    public float pauseTime() {
         return pauseTime;
     }
 
@@ -67,7 +67,7 @@ public class MutableGcEvent implements GcEvent {
         this.collector = collector;
     }
 
-    public void pauseTime(long pauseTime) {
+    public void pauseTime(float pauseTime) {
         this.pauseTime = pauseTime;
     }
 

@@ -1,4 +1,4 @@
-package io.subnano.kdb;
+package io.subnano.kx;
 
 /**
  * @author Mark Wardell
