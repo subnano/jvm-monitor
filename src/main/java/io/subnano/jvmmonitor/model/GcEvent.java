@@ -1,14 +1,6 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.model;
 
 public interface GcEvent extends JvmEvent {
-
-    long timestamp();
-
-    String host();
-
-    int pid();
-
-    String mainClass();
 
     String cause();
 

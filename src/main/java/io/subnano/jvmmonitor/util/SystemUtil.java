@@ -1,4 +1,4 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

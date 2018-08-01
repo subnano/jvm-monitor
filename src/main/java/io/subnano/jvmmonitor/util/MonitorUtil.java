@@ -1,4 +1,4 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.util;
 
 import sun.jvmstat.monitor.Monitor;
 import sun.jvmstat.monitor.MonitorException;
@@ -16,7 +16,7 @@ public final class MonitorUtil {
         return (String) monitor.getValue();
     }
 
-    static Monitor getMonitor(MonitoredVm vm, String name) {
+    public static Monitor getMonitor(MonitoredVm vm, String name) {
         try {
             return vm.findByName(name);
         } catch (MonitorException e) {
@@ -24,7 +24,7 @@ public final class MonitorUtil {
         }
     }
 
-    static Monitor getIndexedMonitor(MonitoredVm vm, String format, int index) {
+    public static Monitor getIndexedMonitor(MonitoredVm vm, String format, int index) {
         return getMonitor(vm, String.format(format, index));
     }
 }

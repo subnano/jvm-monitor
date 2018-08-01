@@ -1,4 +1,4 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.util;
 
 import java.util.concurrent.ThreadFactory;
 

@@ -1,7 +1,7 @@
 package io.subnano.kx;
 
-import io.subnano.jvmmonitor.GcEvent;
-import io.subnano.jvmmonitor.MutableGcEvent;
+import io.subnano.jvmmonitor.model.GcEvent;
+import io.subnano.jvmmonitor.model.MutableGcEvent;
 import io.subnano.jvmmonitor.recorder.GcEventWriter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

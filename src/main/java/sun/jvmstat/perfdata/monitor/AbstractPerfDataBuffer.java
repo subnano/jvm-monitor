@@ -72,9 +72,9 @@ public abstract class AbstractPerfDataBuffer {
     }
 
     /**
-     * Get the capacity of the instrumentation buffer.
+     * Get the heapCapacity of the instrumentation buffer.
      *
-     * @return int - the capacity, or size, of the instrumentation buffer.
+     * @return int - the heapCapacity, or size, of the instrumentation buffer.
      */
     public int getCapacity() {
         return impl.getCapacity();

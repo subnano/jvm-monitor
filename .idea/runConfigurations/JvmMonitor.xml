@@ -5,12 +5,10 @@
     <option name="VM_PARAMETERS" value="-XX:+PrintGCDetails -XX:-PrintGCApplicationStoppedTime -XX:-PrintGCApplicationConcurrentTime -XX:+PrintGCDateStamps" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="io.subnano.jvmmonitor.*" />
+        <option name="PATTERN" value="io.subnano.jvmmonitor.model.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
+    <method />
   </configuration>
 </component>

@@ -1,6 +1,6 @@
 package io.subnano.jvmmonitor.recorder;
 
-import io.subnano.jvmmonitor.JvmEvent;
+import io.subnano.jvmmonitor.model.JvmEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

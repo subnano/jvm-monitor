@@ -424,7 +424,7 @@ public class PerfDataBuffer extends PerfDataBufferImpl {
                 map.remove(s1_size);
 
                 // get the maximum new generation size
-                String new_max_name = "hotspot.gc.generation.0.capacity.max";
+                String new_max_name = "hotspot.gc.generation.0.heapCapacity.max";
                 LongMonitor new_max = (LongMonitor)map.get(new_max_name);
 
                 /*
