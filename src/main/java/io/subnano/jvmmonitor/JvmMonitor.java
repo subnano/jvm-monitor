@@ -1,6 +1,9 @@
 package io.subnano.jvmmonitor;
 
+import io.subnano.jvmmonitor.monitor.HostMonitor;
 import io.subnano.jvmmonitor.recorder.KdbEventRecorder;
+import io.subnano.jvmmonitor.settings.DefaultMonitorSettings;
+import io.subnano.jvmmonitor.settings.MonitorSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +21,8 @@ public class JvmMonitor {
     }
 
     public static void main(String[] args) {
-        JvmMonitor jvmMonitor = new JvmMonitor(new MonitorSettings());
+        MonitorSettings monitorSettings = DefaultMonitorSettings.newInstance();
+        JvmMonitor jvmMonitor = new JvmMonitor(monitorSettings);
         try {
             jvmMonitor.start();
         } catch (IOException e) {
@@ -29,7 +33,7 @@ public class JvmMonitor {
     private void start() throws IOException {
         LOGGER.info("Starting ..");
         hostMonitor.start();
-        while(Thread.currentThread().isAlive()) {
+        while (Thread.currentThread().isAlive()) {
             LockSupport.parkNanos(1_000_000L);
         }
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));

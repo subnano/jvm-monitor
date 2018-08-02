@@ -1,4 +1,4 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.monitor;
 
 import io.subnano.jvmmonitor.model.MutableGcEvent;
 import io.subnano.jvmmonitor.recorder.EventRecorder;
@@ -23,7 +23,7 @@ import java.io.IOException;
  * sun.gc.collector.1.name = PSParallelCompact
  * sun.gc.collector.1.time = 0 (Ticks)
  */
-public class GcEventMonitor implements VmMonitor {
+public class GcEventMonitor extends AbstractVmMonitor {
 
     private static final String GC_LAST_CAUSE = "sun.gc.lastCause";
     private static final String GC_NAME = "sun.gc.collector.%s.name";
@@ -37,11 +37,12 @@ public class GcEventMonitor implements VmMonitor {
 
     private long previousPauseTime = 0;
 
-    GcEventMonitor(String hostName,
-                   MonitoredVm vm,
-                   MonitorSettings settings,
-                   EventRecorder recorder,
-                   int generationIndex) {
+    GcEventMonitor(final MonitoredVm vm,
+                   final String hostName,
+                   final long monitorInterval,
+                   final EventRecorder recorder,
+                   final int generationIndex) {
+        super(vm, hostName, monitorInterval);
         this.recorder = recorder;
         this.monitorGcCause = MonitorUtil.getMonitor(vm, GC_LAST_CAUSE);
         this.monitorGcName = MonitorUtil.getIndexedMonitor(vm, GC_NAME, generationIndex);
@@ -50,12 +51,12 @@ public class GcEventMonitor implements VmMonitor {
 
         // add persistent values
         event.host(hostName);
-        event.pid(Integer.parseInt(vm.getVmIdentifier().getUserInfo()));
-        event.mainClass(getVmMainClass(vm));
+        event.pid(super.pid());
+        event.mainClass(super.mainClass());
     }
 
     @Override
-    public void invoke() {
+    protected void monitorFunction() {
         long currentPauseTime = (long) timeMonitor.getValue();
         if (currentPauseTime != previousPauseTime) {
             event.timestamp(System.currentTimeMillis());
@@ -71,11 +72,4 @@ public class GcEventMonitor implements VmMonitor {
         }
     }
 
-    private String getVmMainClass(MonitoredVm vm) {
-        try {
-            return MonitoredVmUtil.mainClass(vm, true);
-        } catch (MonitorException e) {
-            throw new IllegalArgumentException("Error obtaining Vm main class: ", e);
-        }
-    }
 }

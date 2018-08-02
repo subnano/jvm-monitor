@@ -3,6 +3,7 @@ package io.subnano.jvmmonitor.util;
 import sun.jvmstat.monitor.Monitor;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
+import sun.jvmstat.monitor.MonitoredVmUtil;
 
 public final class MonitorUtil {
 
@@ -27,4 +28,14 @@ public final class MonitorUtil {
     public static Monitor getIndexedMonitor(MonitoredVm vm, String format, int index) {
         return getMonitor(vm, String.format(format, index));
     }
+
+    public static String mainClass(MonitoredVm vm) {
+        try {
+            return MonitoredVmUtil.mainClass(vm, true);
+
+        } catch (MonitorException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
 }

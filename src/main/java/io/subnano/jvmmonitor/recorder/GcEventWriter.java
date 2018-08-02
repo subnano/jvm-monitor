@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class GcEventWriter implements KxTableWriter<GcEvent> {
 
-    private static final String TABLE_NAME = "gcevent";
+    private static final String TABLE_NAME = "vm_gc";
 
     private final KxTableWriter<GcEvent> tableWriter;
 

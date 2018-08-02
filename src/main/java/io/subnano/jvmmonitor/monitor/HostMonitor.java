@@ -1,7 +1,8 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.monitor;
 
 import io.subnano.jvmmonitor.recorder.EventRecorder;
 import io.subnano.jvmmonitor.recorder.KdbEventRecorder;
+import io.subnano.jvmmonitor.settings.MonitorSettings;
 import io.subnano.jvmmonitor.util.SystemUtil;
 import io.subnano.jvmmonitor.util.ThreadFactories;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import sun.jvmstat.monitor.HostIdentifier;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.MonitoredVm;
+import sun.jvmstat.monitor.MonitoredVmUtil;
 import sun.jvmstat.monitor.VmIdentifier;
 import sun.jvmstat.monitor.event.HostEvent;
 import sun.jvmstat.monitor.event.HostListener;
@@ -17,11 +19,14 @@ import sun.jvmstat.monitor.event.VmStatusChangeEvent;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 public class HostMonitor {
 
@@ -33,7 +38,7 @@ public class HostMonitor {
     private final MonitoredHost monitoredHost;
     private final MonitorSettings settings;
     private final ScheduledExecutorService executor;
-    private final ConcurrentMap<Integer, VmMonitor> monitoredVMs = new ConcurrentHashMap<>();
+    private final List<VmMonitor> monitoredVMs = new CopyOnWriteArrayList<>();
     private final EventRecorder eventRecorder;
 
     public HostMonitor(MonitorSettings settings, KdbEventRecorder eventRecorder) {
@@ -87,7 +92,7 @@ public class HostMonitor {
          */
         private void addVm(Object o) {
             int vmId = (int) o;
-            LOGGER.info("VM Started: {}", vmId);
+            LOGGER.info("VM started pid={}", vmId);
             String vmIdString = "//" + vmId + "?mode=r";
             try {
                 VmIdentifier vmIdentifier = new VmIdentifier(vmIdString);
@@ -97,10 +102,10 @@ public class HostMonitor {
 //                perfDataBuffer.findByName();
                 // autoboxing int not ideal
                 MonitoredVm vm = monitoredHost.getMonitoredVm(vmIdentifier, 0);
-                monitoredVMs.putIfAbsent(vmId, new GcEventMonitor(hostName, vm, settings, eventRecorder, YOUNG_GEN));
-                monitoredVMs.putIfAbsent(vmId, new GcEventMonitor(hostName, vm, settings, eventRecorder, OLD_GEN));
-                monitoredVMs.putIfAbsent(vmId, new HeapSampleMonitor(hostName, vm, settings, eventRecorder, YOUNG_GEN));
-                monitoredVMs.putIfAbsent(vmId, new HeapSampleMonitor(hostName, vm, settings, eventRecorder, OLD_GEN));
+                monitoredVMs.add(new GcEventMonitor(vm, hostName, settings.gcIntervalYoungGen(), eventRecorder, YOUNG_GEN));
+                monitoredVMs.add(new GcEventMonitor(vm, hostName, settings.gcIntervalOldGen(), eventRecorder, OLD_GEN));
+                monitoredVMs.add(new HeapSampleMonitor(vm, hostName, settings.heapSampleIntervalYoungGen(), eventRecorder, YOUNG_GEN));
+                monitoredVMs.add(new HeapSampleMonitor(vm, hostName, settings.heapSampleIntervalOldGen(), eventRecorder, OLD_GEN));
 
             } catch (URISyntaxException e) {
                 LOGGER.warn("Unable to create VmIdentifier from {}", vmIdString);
@@ -111,9 +116,8 @@ public class HostMonitor {
 
         private void removeVm(Object o) {
             int vmId = (int) o;
-            LOGGER.info("VM Terminated: {}", vmId);
-            monitoredVMs.remove(vmId);
-            // TODO check and warn if not present?
+            LOGGER.info("VM terminated pid={}", vmId);
+            monitoredVMs.removeIf(vmMonitor -> vmMonitor.pid() == vmId);
         }
 
         @Override
@@ -125,9 +129,9 @@ public class HostMonitor {
     private class VMCheck implements Runnable {
         @Override
         public void run() {
-            monitoredVMs.forEach((id, monitor) -> {
+            monitoredVMs.forEach(vmMonitor -> {
                 try {
-                    monitor.invoke();
+                    vmMonitor.invoke();
                 } catch (Exception e) {
                     LOGGER.warn("Exception in monitor: {}", e.toString(), e);
                 }

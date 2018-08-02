@@ -1,4 +1,4 @@
-package io.subnano.jvmmonitor;
+package io.subnano.jvmmonitor.monitor;
 
 /**
  * Simple interface for all monitor implementations.
@@ -7,6 +7,11 @@ package io.subnano.jvmmonitor;
  */
 public interface VmMonitor {
 
-    void invoke();
+    String hostName();
 
+    String mainClass();
+
+    int pid();
+
+    void invoke();
 }
