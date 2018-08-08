@@ -3,6 +3,7 @@ package io.subnano.jvmmonitor.monitor;
 import io.subnano.jvmmonitor.recorder.EventRecorder;
 import io.subnano.jvmmonitor.recorder.KdbEventRecorder;
 import io.subnano.jvmmonitor.settings.MonitorSettings;
+import io.subnano.jvmmonitor.util.MonitorUtil;
 import io.subnano.jvmmonitor.util.SystemUtil;
 import io.subnano.jvmmonitor.util.ThreadFactories;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +12,6 @@ import sun.jvmstat.monitor.HostIdentifier;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.MonitoredVm;
-import sun.jvmstat.monitor.MonitoredVmUtil;
 import sun.jvmstat.monitor.VmIdentifier;
 import sun.jvmstat.monitor.event.HostEvent;
 import sun.jvmstat.monitor.event.HostListener;
@@ -20,13 +20,10 @@ import sun.jvmstat.monitor.event.VmStatusChangeEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 
 public class HostMonitor {
 
@@ -71,8 +68,16 @@ public class HostMonitor {
         // decided against using this as it isn't ideal
         // really need to write own efficient way of monitoring list of VMs
         //Set<Integer> jvms = monitoredHost.activeVms();
+        long minInterval = getMinInterval(settings);
+        LOGGER.info("Scheduling primary monitor thread every {} ms", minInterval);
+        executor.scheduleAtFixedRate(new VMCheck(), 10, minInterval, TimeUnit.MILLISECONDS);
         eventRecorder.connect();
-        executor.scheduleAtFixedRate(new VMCheck(), 10, 10, TimeUnit.MILLISECONDS);
+    }
+
+    private static long getMinInterval(MonitorSettings settings) {
+        long gcMin = Math.min(settings.gcIntervalYoungGen(), settings.gcIntervalOldGen());
+        long heapMin = Math.min(settings.heapSampleIntervalYoungGen(), settings.heapSampleIntervalOldGen());
+        return Math.min(gcMin, heapMin);
     }
 
     public void stop() throws IOException {
@@ -92,7 +97,6 @@ public class HostMonitor {
          */
         private void addVm(Object o) {
             int vmId = (int) o;
-            LOGGER.info("VM started pid={}", vmId);
             String vmIdString = "//" + vmId + "?mode=r";
             try {
                 VmIdentifier vmIdentifier = new VmIdentifier(vmIdString);
@@ -102,6 +106,7 @@ public class HostMonitor {
 //                perfDataBuffer.findByName();
                 // autoboxing int not ideal
                 MonitoredVm vm = monitoredHost.getMonitoredVm(vmIdentifier, 0);
+                LOGGER.info("VM started {} ({})", MonitorUtil.mainClass(vm), vmId);
                 monitoredVMs.add(new GcEventMonitor(vm, hostName, settings.gcIntervalYoungGen(), eventRecorder, YOUNG_GEN));
                 monitoredVMs.add(new GcEventMonitor(vm, hostName, settings.gcIntervalOldGen(), eventRecorder, OLD_GEN));
                 monitoredVMs.add(new HeapSampleMonitor(vm, hostName, settings.heapSampleIntervalYoungGen(), eventRecorder, YOUNG_GEN));
