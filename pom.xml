@@ -3,13 +3,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <groupId>io.subnano</groupId>
+    <groupId>net.subnano</groupId>
     <artifactId>jvm-monitor</artifactId>
     <version>1.0.0</version>
 
     <properties>
         <java.version>1.8</java.version>
-        <nano.version>1.0.4</nano.version>
+        <nano.version>2018.10.2</nano.version>
         <log4j.version>2.11.0</log4j.version>
         <junit.version>5.1.0</junit.version>
         <assertj.version>3.10.0</assertj.version>
@@ -17,6 +17,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shade.plugin.version>3.1.1</shade.plugin.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>bintray</id>
+            <url>https://dl.bintray.com/nano-io/release</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -37,7 +44,7 @@
                     <transformers>
                         <transformer
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>io.subnano.jvmmonitor.JvmMonitor</mainClass>
+                            <mainClass>net.subnano.jvmmonitor.JvmMonitor</mainClass>
                         </transformer>
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
@@ -58,14 +65,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.nano</groupId>
+            <groupId>net.subnano</groupId>
             <artifactId>nano-kx</artifactId>
             <version>${nano.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.nano</groupId>
+            <groupId>net.subnano</groupId>
             <artifactId>nano-core</artifactId>
             <version>${nano.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jnr</groupId>
+            <artifactId>jnr-posix</artifactId>
+            <version>3.0.46</version>
         </dependency>
         <dependency>
             <groupId>com.github.oshi</groupId>

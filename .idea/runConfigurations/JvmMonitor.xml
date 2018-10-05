@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="JvmMonitor" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="io.subnano.jvmmonitor.JvmMonitor" />
+    <option name="MAIN_CLASS_NAME" value="net.subnano.jvmmonitor.JvmMonitor" />
     <module name="jvm-monitor" />
     <option name="VM_PARAMETERS" value="-XX:+PrintGCDetails -XX:-PrintGCApplicationStoppedTime -XX:-PrintGCApplicationConcurrentTime -XX:+PrintGCDateStamps" />
     <extension name="coverage">
