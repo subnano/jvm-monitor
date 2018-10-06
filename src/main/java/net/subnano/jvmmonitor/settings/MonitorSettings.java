@@ -8,7 +8,6 @@ public class MonitorSettings {
     private static final String KDB_HOST_KEY = "kdb.host";
     private static final String KDB_PORT_KEY = "kdb.port";
 
-    private final boolean consoleEnabled;
     private final String kdbHost;
     private final int kdbPort;
     private final long processScanInterval;
@@ -18,7 +17,6 @@ public class MonitorSettings {
     private final long heapSampleIntervalOldGen;
 
     private MonitorSettings(Builder builder) {
-        this.consoleEnabled = builder.consoleEnabled;
         this.kdbHost = builder.kdbHost;
         this.kdbPort = builder.kdbPort;
         this.processScanInterval = builder.processScanInterval;
@@ -26,10 +24,6 @@ public class MonitorSettings {
         this.gcIntervalOldGen = builder.gcIntervalOldGen;
         this.heapSampleIntervalYoungGen = builder.heapSampleIntervalYoungGen;
         this.heapSampleIntervalOldGen = builder.heapSampleIntervalOldGen;
-    }
-
-    public boolean isConsoleEnabled() {
-        return consoleEnabled;
     }
 
     public String kdbHost() {
@@ -62,25 +56,14 @@ public class MonitorSettings {
 
     public static class Builder {
 
-        private static final String UI_FLAG = "-ui";
         private String kdbHost = getProperty(KDB_HOST_KEY, "localhost");
         private int kdbPort = getIntProperty(KDB_PORT_KEY, 5001);
 
-        private boolean consoleEnabled = false;
         private long processScanInterval;
         private long gcIntervalYoungGen;
         private long gcIntervalOldGen;
         private long heapSampleIntervalYoungGen;
         private long heapSampleIntervalOldGen;
-
-        public Builder withArgs(String[] args) {
-            for (String arg : args) {
-                if (arg.equals(UI_FLAG)) {
-                    consoleEnabled = true;
-                }
-            }
-            return this;
-        }
 
         public Builder processScanInterval(long value) {
             processScanInterval = value;

@@ -1,6 +1,5 @@
 package net.subnano.jvmmonitor;
 
-import net.subnano.jvmmonitor.console.JvmConsole;
 import net.subnano.jvmmonitor.monitor.HostMonitor;
 import net.subnano.jvmmonitor.recorder.KdbEventRecorder;
 import net.subnano.jvmmonitor.settings.DefaultMonitorSettings;
@@ -21,14 +20,7 @@ public class JvmMonitor {
 
     JvmMonitor(MonitorSettings settings) {
         KdbEventRecorder kdbRecorder = new KdbEventRecorder(settings.kdbHost(), settings.kdbPort());
-        // TODO add toggle to display console
-        if (settings.isConsoleEnabled() && JvmConsole.isSupported()) {
-            JvmConsole jvmConsole = new JvmConsole(kdbRecorder);
-            this.hostMonitor = new HostMonitor(settings, jvmConsole);
-        }
-        else {
-            this.hostMonitor = new HostMonitor(settings, kdbRecorder);
-        }
+        this.hostMonitor = new HostMonitor(settings, kdbRecorder);
     }
 
     public static void main(String[] args) {

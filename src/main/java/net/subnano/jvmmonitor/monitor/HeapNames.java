@@ -1,9 +1,9 @@
 package net.subnano.jvmmonitor.monitor;
 
-class HeapNames {
+public class HeapNames {
 
-    private static final String YOUNG_GEN = "YoungGen";
-    private static final String OLD_GEN = "OldGen";
+    public static final String YOUNG_GEN = "YoungGen";
+    public static final String OLD_GEN = "OldGen";
 
     private HeapNames() {
         // can't touch this

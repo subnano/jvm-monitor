@@ -1,7 +1,8 @@
 package net.subnano.console;
 
+import net.subnano.jvmmonitor.util.Strings;
+
 import java.io.PrintStream;
-import java.util.Collections;
 
 /**
  * Provides a richer interface to a console that supports Ansi escape sequences.
@@ -23,6 +24,8 @@ public class ConsoleWriter {
     private final StringBuilder buffer;
     private final PrintStream out;
     private final int[] tmpArray = new int[64];    // 64 should do it
+
+    private Ansi.Attribute attribute;
 
     public ConsoleWriter(PrintStream out) {
         this.out = out;
@@ -54,12 +57,13 @@ public class ConsoleWriter {
         } else {
             buffer.setLength(0);
         }
-        out.print(stringRepeat(newLineIndexes.length, CLEAR_WHOLE_LINE + LINE_UP));
+        out.print(Strings.repeat(CLEAR_WHOLE_LINE + LINE_UP, newLineIndexes.length));
         out.print(CLEAR_LINE);
         return this;
     }
 
     public ConsoleWriter print(String s) {
+        doAttribute();
         buffer.append(s);
         return this;
     }
@@ -76,8 +80,15 @@ public class ConsoleWriter {
         return this;
     }
 
+    public ConsoleWriter attribute(Ansi.Attribute attribute) {
+        this.attribute = attribute;
+        doAttribute();
+        return this;
+    }
+
+
     public ConsoleWriter line() {
-        buffer.append(stringRepeat(50, "─")).append(NEW_LINE);
+        buffer.append(Strings.repeat("─", 50)).append(NEW_LINE);
         return this;
     }
 
@@ -87,6 +98,18 @@ public class ConsoleWriter {
         }
         out.print(buffer.toString());
         out.flush();
+    }
+
+    public ConsoleWriter cursorOff() {
+        appendEscapeSequence("?25");
+        buffer.append('l');
+        return this;
+    }
+
+    public ConsoleWriter cursorOn() {
+        appendEscapeSequence("?25");
+        buffer.append('h');
+        return this;
     }
 
     private int[] getNewLineIndexes(StringBuilder buffer) {
@@ -101,8 +124,12 @@ public class ConsoleWriter {
         return newLineIndexes;
     }
 
-    private String stringRepeat(int count, String str) {
-        return String.join("", Collections.nCopies(count, str));
+    private ConsoleWriter doAttribute() {
+        if (attribute != null) {
+            appendEscapeSequence(String.valueOf(attribute.value()));
+            buffer.append('m');
+        }
+        return this;
     }
 
     private void appendEscapeSequence(String command) {

@@ -53,7 +53,7 @@ public class HeapSampleMonitor extends AbstractVmMonitor {
     private final EventRecorder recorder;
     private final Monitor heapUsedMonitor;
     private final Monitor heapCapacityMonitor;
-    private final MutableHeapSample heapUsedSample;
+    private final MutableHeapSample heapSample;
 
     private long previousHeapUsed = 0;
 
@@ -66,25 +66,25 @@ public class HeapSampleMonitor extends AbstractVmMonitor {
         this.recorder = recorder;
         this.heapUsedMonitor = MonitorUtil.getIndexedMonitor(vm, HEAP_USED, generationIndex);
         this.heapCapacityMonitor = MonitorUtil.getIndexedMonitor(vm, HEAP_CAPACITY, generationIndex);
-        this.heapUsedSample = new MutableHeapSample();
+        this.heapSample = new MutableHeapSample();
 
         // add persistent values
-        heapUsedSample.host(hostName);
-        heapUsedSample.pid(super.pid());
-        heapUsedSample.mainClass(super.mainClass());
-        heapUsedSample.name(HeapNames.getName(generationIndex));
+        heapSample.host(hostName);
+        heapSample.pid(super.pid());
+        heapSample.mainClass(super.mainClass());
+        heapSample.name(HeapNames.getName(generationIndex));
     }
 
     @Override
     protected void monitorFunction() {
         long currentHeapUsed = (long) heapUsedMonitor.getValue();
         if (currentHeapUsed != previousHeapUsed) {
-            heapUsedSample.timestamp(System.currentTimeMillis());
-            heapUsedSample.heapUsed((long) heapUsedMonitor.getValue());
-            heapUsedSample.heapCapacity((long) heapCapacityMonitor.getValue());
+            heapSample.timestamp(System.currentTimeMillis());
+            heapSample.heapUsed((long) heapUsedMonitor.getValue());
+            heapSample.heapCapacity((long) heapCapacityMonitor.getValue());
             previousHeapUsed = currentHeapUsed;
             try {
-                recorder.record(heapUsedSample);
+                recorder.record(heapSample);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e);
             }

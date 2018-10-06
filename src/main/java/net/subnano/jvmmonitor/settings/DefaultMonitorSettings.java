@@ -21,7 +21,6 @@ public class DefaultMonitorSettings {
 
     public static MonitorSettings newInstance(String[] args) {
         return new MonitorSettings.Builder()
-                .withArgs(args)
                 .processScanInterval(getLongValue(PROCESS_SCAN_INTERVAL_KEY, DEFAULT_PROCESS_SCAN_INTERVAL))
                 .gcIntervalYoungGen(getLongValue(GC_INTERVAL_YG_KEY, DEFAULT_GC_INTERVAL_YG))
                 .gcIntervalOldGen(getLongValue(GC_INTERVAL_OG_KEY, DEFAULT_GC_INTERVAL_OG))
