@@ -1,5 +1,6 @@
 package net.subnano.jvmmonitor.console;
 
+import io.nano.core.util.Maths;
 import net.subnano.console.Ansi;
 import net.subnano.console.Ansi.Color;
 import net.subnano.console.ConsoleWriter;
@@ -8,7 +9,7 @@ import net.subnano.jvmmonitor.util.Strings;
 class JvmInfoGrid {
 
     private static final String[] COLS_HEADS = {
-        "  PID", " CPU%", "Threads", "  Heap", "  Max", "    %", " YGCs", " OGCs", "Pause", "  Avg", "  Alloc", "  Rate", "MainClass"
+        "   PID", " CPU%", "Threads", "  Heap", "  Max", "    %", " YGCs", " OGCs", " Pause", "   Avg", "  Alloc", "  Rate", "MainClass"
     };
 
     private final ConsoleWriter console;
@@ -18,7 +19,6 @@ class JvmInfoGrid {
     private final Color[][] colors;
     private final int rows;
     private final int cols;
-    private final int columnOffset;
 
     JvmInfoGrid(int rows, int cols) {
         this.console = new ConsoleWriter(System.out);
@@ -28,7 +28,6 @@ class JvmInfoGrid {
         this.colIndexes = calcColIndexes(COLS_HEADS);
         this.values = new String[rows][cols];
         this.colors = new Color[rows][cols];
-        this.columnOffset = 1;
         initConsole();
     }
 
@@ -46,7 +45,7 @@ class JvmInfoGrid {
             console.attribute(Ansi.Attribute.IntensityFaint);
             console.bg(Color.Green);
             console.fg(Color.Black);
-            console.cursor(1, columnOffset + colIndexes[i]);
+            console.cursor(1, colIndexes[i]);
             console.print(Strings.padLeft(COLS_HEADS[i], colWidths[i]));
         }
         console.reset();
@@ -80,7 +79,7 @@ class JvmInfoGrid {
     }
 
     private void updateCell(int row, int col, String value) {
-        console.cursor(row+2, columnOffset + colIndexes[col]);
+        console.cursor(row+2, colIndexes[col]);
         console.print(Strings.padLeft(value, colWidths[col]));
     }
 
@@ -93,7 +92,13 @@ class JvmInfoGrid {
     }
 
     public void setValue(int row, int col, double value, int precision) {
-        values[row][col] = String.format("%." + precision + "f", value);
+        String textValue = isZero(value) ? "0" : String.format("%." + precision + "f", value);
+        values[row][col] = textValue;
+    }
+
+    // TODO move isZero to nano Maths
+    private boolean isZero(double value) {
+        return Math.abs(value) < 1e-9;
     }
 
     public void setColor(int row, int col, Color color) {

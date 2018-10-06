@@ -33,6 +33,8 @@ import java.util.concurrent.locks.LockSupport;
  * - add input key support
  * - cell colors should be function based
  * - alloc rate should be red when > 100 (or whatever value)
+ * - CPU should be magenta when > 100%
+ * - gc pause data should be scaled when grows
  *
  * @author Mark Wardell
  */
@@ -58,10 +60,10 @@ public class JvmMonitorConsole implements EventRecorder<JvmEvent> {
     }
 
     public static void main(String[] args) {
-//        if (!JvmMonitorConsole.isSupported()) {
-//            System.err.println("Not running in a supported console!");
-//            System.exit(-1);
-//        }
+        if (!JvmMonitorConsole.isSupported()) {
+            System.err.println("Not running in a supported console!");
+            System.exit(-1);
+        }
         MonitorSettings monitorSettings = DefaultMonitorSettings.newInstance(args);
         JvmMonitorConsole jvmMonitorConsole = new JvmMonitorConsole(monitorSettings);
         try {
@@ -148,8 +150,8 @@ public class JvmMonitorConsole implements EventRecorder<JvmEvent> {
             // OldGen Collections
             grid.setColor(row, 7, info.oldCollections == 0 ? Color.White : Color.Red);
 
-            grid.setColor(row, 9, Color.Yellow);
             grid.setColor(row, 10, Color.Yellow);
+            grid.setColor(row, 11, Color.Yellow);
 
 
             grid.setValue(row, 3, ByteUtil.toMB(info.heapUsed), 1);
@@ -158,8 +160,8 @@ public class JvmMonitorConsole implements EventRecorder<JvmEvent> {
 
             grid.setValue(row, 6, info.collections);
             grid.setValue(row, 7, info.oldCollections);
-            grid.setValue(row, 8, info.totalPauseTime, 1);
-            grid.setValue(row, 9, info.avgPauseTime(), 2);
+            grid.setValue(row, 8, info.totalPauseTime, 2);
+            grid.setValue(row, 9, info.avgPauseTime(), 3);
             grid.setValue(row, 10, getScaledByteText(info.alloc, 1));
             grid.setValue(row, 11, ByteUtil.toMB(info.allocatedBytesPerSec()), 1);
             grid.setValue(row, 12, Strings.padRight(info.mainClass, 30));
@@ -292,6 +294,7 @@ public class JvmMonitorConsole implements EventRecorder<JvmEvent> {
         }
 
         double heapPercent() {
+
             return (heapUsed * 100) / (double) heapCapacity;
         }
 
