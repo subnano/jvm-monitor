@@ -1,6 +1,5 @@
-package net.subnano.jvmmonitor.console;
+package net.subnano.jtop;
 
-import io.nano.core.util.Maths;
 import net.subnano.console.Ansi;
 import net.subnano.console.Ansi.Color;
 import net.subnano.console.ConsoleWriter;
@@ -9,7 +8,7 @@ import net.subnano.jvmmonitor.util.Strings;
 class JvmInfoGrid {
 
     private static final String[] COLS_HEADS = {
-        "   PID", " CPU%", "Threads", "  Heap", "  Max", "    %", " YGCs", " OGCs", " Pause", "   Avg", "  Alloc", "  Rate", "MainClass"
+        "   PID", " CPU%", "Threads", "  Heap", "  Max", "    %", " YGCs", " OGCs", " Pause", "   Avg", "  Alloc", "  Rate", "Command"
     };
 
     private final ConsoleWriter console;
@@ -36,10 +35,9 @@ class JvmInfoGrid {
         console.clearScreen();
         console.cursorOff();
         console.attribute(Ansi.Attribute.IntensityFaint);
-        // TODO decorate heading
         console.cursor(1, 1);
         console.bg(Color.Green);
-        console.print(Strings.space(100));
+        console.print(Strings.space(120));
         console.reset();
         for (int i = 0; i < COLS_HEADS.length; i++) {
             console.attribute(Ansi.Attribute.IntensityFaint);

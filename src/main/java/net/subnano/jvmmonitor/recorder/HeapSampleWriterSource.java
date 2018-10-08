@@ -20,9 +20,9 @@ public class HeapSampleWriterSource implements KxWriterSource<HeapSample> {
     public KxSchema schema() {
         return new DefaultKxSchema.Builder()
                 .table(TABLE_NAME)
+                .addColumn("sym", ColumnType.String)
                 .addColumn("host", ColumnType.String)
-                .addColumn("main_class", ColumnType.String)
-                .addColumn("timestamp", ColumnType.Timestamp)
+                .addColumn("timestamp", ColumnType.Long)
                 .addColumn("pid", ColumnType.Int)
                 .addColumn("space", ColumnType.String)
                 .addColumn("heap_used", ColumnType.Long)
@@ -37,14 +37,14 @@ public class HeapSampleWriterSource implements KxWriterSource<HeapSample> {
 
     @Override
     public KxConnection.Mode mode() {
-        return KxConnection.Mode.Sync;
+        return KxConnection.Mode.Async;
     }
 
     private void encode(HeapSample event, TableDataBuffer buffer) {
         buffer.reset();
-        buffer.addString(event.host());
         buffer.addString(event.mainClass());
-        buffer.addTimestamp(event.timestamp());
+        buffer.addString(event.host());
+        buffer.addLong(event.timestamp());
         buffer.addInt(event.pid());
         buffer.addString(event.name());
         buffer.addLong(event.heapUsed());

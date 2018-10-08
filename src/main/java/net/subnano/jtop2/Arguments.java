@@ -1,4 +1,4 @@
-package net.subnano.jtop;
+package net.subnano.jtop2;
 
 /**
  * @author Mark Wardell

@@ -12,3 +12,9 @@ Monitors and records JVM garbage collection activity.
 - limit use of 'sun' source code
 - improve efficiency of monitoring - should use PerfDataBuffer directly
 - kdb writing should be async
+
+### Kx Schema
+```
+vm_gc:flip `sym`host`timestamp`pid`space`collector`cause`pause_time!"SSJISSSF"$\:();
+vm_heap:flip `sym`host`timestamp`pid`space`heap_used`heap_capacity!"SSJISII"$\:();
+```

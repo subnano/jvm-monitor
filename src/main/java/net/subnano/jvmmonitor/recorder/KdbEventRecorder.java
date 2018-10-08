@@ -32,14 +32,13 @@ public class KdbEventRecorder implements EventRecorder<JvmEvent> {
 
     @Override
     public void record(JvmEvent event) {
-        return;
-//        if (event instanceof GcEvent) {
-//            gcEventWriter.write((GcEvent) event);
-//        } else if (event instanceof HeapSample) {
-//            heapSampleWriter.write((HeapSample) event);
-//        } else {
-//            throw new IllegalArgumentException("JvmEvent not supported " + event.getClass());
-//        }
+        if (event instanceof GcEvent) {
+            gcEventWriter.write((GcEvent) event);
+        } else if (event instanceof HeapSample) {
+            heapSampleWriter.write((HeapSample) event);
+        } else {
+            throw new IllegalArgumentException("JvmEvent not supported " + event.getClass());
+        }
     }
 
     @Override
