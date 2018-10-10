@@ -8,7 +8,7 @@ import net.subnano.jvmmonitor.util.Strings;
 class JvmInfoGrid {
 
     private static final String[] COLS_HEADS = {
-        "   PID", " CPU%", "Threads", "  Heap", "  Max", "    %", " YGCs", " OGCs", " Pause", "   Avg", "  Alloc", "  Rate", "Command"
+        "   PID", " CPU%", "Thrds", "  Heap", "  Max", "    %", "Alloc", " Rate", "YGCs", "OGCs", " Pause", "   Avg", "Command"
     };
 
     private final ConsoleWriter console;

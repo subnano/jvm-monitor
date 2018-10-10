@@ -59,10 +59,10 @@ public class JTop implements EventRecorder<JvmEvent> {
     }
 
     public static void main(String[] args) {
-        if (!JTop.isSupported()) {
-            System.err.println("Not running in a supported console!");
-            System.exit(-1);
-        }
+//        if (!JTop.isSupported()) {
+//            System.err.println("Not running in a supported console!");
+//            System.exit(-1);
+//        }
         MonitorSettings monitorSettings = DefaultMonitorSettings.newInstance(args);
         JTop console = new JTop(monitorSettings);
         try {
@@ -145,23 +145,23 @@ public class JTop implements EventRecorder<JvmEvent> {
             grid.setColor(row, 4, Color.Cyan);
             grid.setColor(row, 5, Color.Cyan);
 
-            // OldGen Collections
-            grid.setColor(row, 7, info.oldCollections == 0 ? Color.White : Color.Red);
-
-            grid.setColor(row, 10, Color.Yellow);
-            grid.setColor(row, 11, Color.Yellow);
-
-
             grid.setValue(row, 3, ByteUtil.toMB(info.heapUsed), 1);
-            grid.setValue(row, 4, getScaledByteText(info.heapCapacity, 1));
+            grid.setValue(row, 4, ByteUtil.getScaledByteText(info.heapCapacity, 0));
             grid.setValue(row, 5, info.heapPercent(), 1);
 
-            grid.setValue(row, 6, info.collections);
-            grid.setValue(row, 7, info.oldCollections);
-            grid.setValue(row, 8, info.totalPauseTime, 2);
-            grid.setValue(row, 9, info.avgPauseTime(), 3);
-            grid.setValue(row, 10, getScaledByteText(info.alloc, 1));
-            grid.setValue(row, 11, ByteUtil.toMB(info.allocatedBytesPerSec()), 1);
+            grid.setColor(row, 6, Color.Yellow);
+            grid.setColor(row, 7, Color.Yellow);
+
+            grid.setValue(row, 6, ByteUtil.getScaledByteText(info.alloc, 1));
+            grid.setValue(row, 7, ByteUtil.getScaledByteText(info.allocatedBytesPerSec(), 1));
+
+            // OldGen Collections
+            grid.setColor(row, 9, info.oldCollections == 0 ? Color.White : Color.Red);
+
+            grid.setValue(row, 8, info.collections);
+            grid.setValue(row, 9, info.oldCollections);
+            grid.setValue(row, 10, info.totalPauseTime, 2);
+            grid.setValue(row, 11, info.avgPauseTime(), 3);
             grid.setValue(row, 12, Strings.padRight(info.mainClass, 30));
             row++;
         }
@@ -175,13 +175,6 @@ public class JTop implements EventRecorder<JvmEvent> {
         //return (osProcess.getKernelTime() + osProcess.getUserTime()) / (double) osProcess.getUpTime() * 100.0D;
         return osProcess.getUserTime() / (double) osProcess.getUpTime() * 100.0D;
 
-    }
-
-    private String getScaledByteText(long bytes, int precision) {
-        if (bytes < ByteUtil.GB) {
-            return String.format("%dM", (int) ByteUtil.toMB(bytes));
-        }
-        return String.format("%." + precision + "fG", ByteUtil.toGB(bytes));
     }
 
     private void handle(GcEvent event) {
